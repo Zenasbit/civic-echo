@@ -15,7 +15,7 @@ type Submission = {
   title: string;
   description: string;
   category: string;
-  status: "pending" | "under_review" | "addressed" | "rejected";
+  status: "pending" | "under_review" | "addressed" | "rejected" | "draft";
   is_anonymous: boolean;
   created_at: string;
   admin_responses: Array<{

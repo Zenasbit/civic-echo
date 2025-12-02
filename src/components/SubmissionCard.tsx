@@ -9,7 +9,7 @@ interface SubmissionCardProps {
   title: string;
   description: string;
   category: string;
-  status: "pending" | "under_review" | "addressed" | "rejected";
+  status: "pending" | "under_review" | "addressed" | "rejected" | "draft";
   isAnonymous: boolean;
   createdAt: string;
   onClick?: () => void;
