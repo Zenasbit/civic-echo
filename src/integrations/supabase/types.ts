@@ -144,7 +144,12 @@ export type Database = {
         | "environment"
         | "economic_development"
         | "other"
-      submission_status: "pending" | "under_review" | "addressed" | "rejected"
+      submission_status:
+        | "pending"
+        | "under_review"
+        | "addressed"
+        | "rejected"
+        | "draft"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -282,7 +287,13 @@ export const Constants = {
         "economic_development",
         "other",
       ],
-      submission_status: ["pending", "under_review", "addressed", "rejected"],
+      submission_status: [
+        "pending",
+        "under_review",
+        "addressed",
+        "rejected",
+        "draft",
+      ],
     },
   },
 } as const

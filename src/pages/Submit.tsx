@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, Save } from "lucide-react";
 
 const categories = [
   { value: "infrastructure", label: "Infrastructure" },
@@ -23,6 +24,7 @@ const categories = [
 
 export default function Submit() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -31,7 +33,7 @@ export default function Submit() {
     isAnonymous: false,
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, isDraft = false) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -44,14 +46,15 @@ export default function Submit() {
         category: formData.category as any,
         is_anonymous: formData.isAnonymous,
         user_id: session?.user?.id || null,
+        status: isDraft ? 'draft' : 'pending',
       }]);
 
       if (error) throw error;
 
-      toast.success("Your feedback has been submitted successfully!");
+      toast.success(isDraft ? t('success_draft') : t('success_submit'));
       navigate("/");
     } catch (error: any) {
-      toast.error(error.message || "Failed to submit feedback");
+      toast.error(error.message || t('error_submit'));
     } finally {
       setIsLoading(false);
     }
@@ -66,23 +69,23 @@ export default function Submit() {
           className="mb-6"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Home
+          {t('back_to_home')}
         </Button>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Submit Your Feedback</CardTitle>
+            <CardTitle className="text-2xl">{t('submit_page_title')}</CardTitle>
             <CardDescription>
-              Share your suggestions, complaints, or ideas to help improve your community
+              {t('submit_page_description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={(e) => handleSubmit(e, false)} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="title">Title *</Label>
+                <Label htmlFor="title">{t('title')} {t('required')}</Label>
                 <Input
                   id="title"
-                  placeholder="Brief summary of your feedback"
+                  placeholder={t('title_placeholder')}
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   required
@@ -91,19 +94,19 @@ export default function Submit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="category">Category *</Label>
+                <Label htmlFor="category">{t('category')} {t('required')}</Label>
                 <Select
                   value={formData.category}
                   onValueChange={(value) => setFormData({ ...formData, category: value })}
                   required
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
+                    <SelectValue placeholder={t('category_placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat) => (
                       <SelectItem key={cat.value} value={cat.value}>
-                        {cat.label}
+                        {t(`categories.${cat.value}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -111,10 +114,10 @@ export default function Submit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Description *</Label>
+                <Label htmlFor="description">{t('description')} {t('required')}</Label>
                 <Textarea
                   id="description"
-                  placeholder="Provide detailed information about your feedback"
+                  placeholder={t('description_placeholder')}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   required
@@ -122,7 +125,7 @@ export default function Submit() {
                   maxLength={2000}
                 />
                 <p className="text-sm text-muted-foreground">
-                  {formData.description.length}/2000 characters
+                  {formData.description.length}/2000 {t('characters')}
                 </p>
               </div>
 
@@ -135,14 +138,27 @@ export default function Submit() {
                   }
                 />
                 <Label htmlFor="anonymous" className="cursor-pointer font-normal">
-                  Submit anonymously (your identity will not be shared)
+                  {t('submit_anonymous')}
                 </Label>
               </div>
 
-              <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Submit Feedback
-              </Button>
+              <div className="flex gap-4">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  className="flex-1" 
+                  onClick={(e) => handleSubmit(e as any, true)}
+                  disabled={isLoading}
+                >
+                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  <Save className="mr-2 h-4 w-4" />
+                  {t('save_draft')}
+                </Button>
+                <Button type="submit" className="flex-1" disabled={isLoading}>
+                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {t('submit_button')}
+                </Button>
+              </div>
             </form>
           </CardContent>
         </Card>

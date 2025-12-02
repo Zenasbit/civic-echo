@@ -18,7 +18,7 @@ type Submission = {
   title: string;
   description: string;
   category: string;
-  status: "pending" | "under_review" | "addressed" | "rejected";
+  status: "pending" | "under_review" | "addressed" | "rejected" | "draft";
   is_anonymous: boolean;
   created_at: string;
 };
@@ -191,6 +191,7 @@ export default function Admin() {
             <TabsTrigger value="pending">Pending</TabsTrigger>
             <TabsTrigger value="under_review">Under Review</TabsTrigger>
             <TabsTrigger value="addressed">Addressed</TabsTrigger>
+            <TabsTrigger value="draft">Drafts</TabsTrigger>
           </TabsList>
 
           <TabsContent value="all" className="space-y-4">
@@ -221,7 +222,7 @@ export default function Admin() {
             )}
           </TabsContent>
 
-          {["pending", "under_review", "addressed"].map((statusFilter) => (
+          {["pending", "under_review", "addressed", "draft"].map((statusFilter) => (
             <TabsContent key={statusFilter} value={statusFilter} className="space-y-4">
               {submissions
                 .filter((s) => s.status === statusFilter)
@@ -256,17 +257,18 @@ export default function Admin() {
             
             <div className="space-y-2">
               <Label htmlFor="status">Update Status</Label>
-              <Select value={newStatus} onValueChange={setNewStatus}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="under_review">Under Review</SelectItem>
-                  <SelectItem value="addressed">Addressed</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
-                </SelectContent>
-              </Select>
+                <Select value={newStatus} onValueChange={setNewStatus}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="under_review">Under Review</SelectItem>
+                    <SelectItem value="addressed">Addressed</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
             </div>
 
             <div className="space-y-2">

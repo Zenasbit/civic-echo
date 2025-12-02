@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Clock, AlertCircle, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, AlertCircle, XCircle, FileEdit } from "lucide-react";
 
-type Status = "pending" | "under_review" | "addressed" | "rejected";
+type Status = "pending" | "under_review" | "addressed" | "rejected" | "draft";
 
 interface StatusBadgeProps {
   status: Status;
@@ -31,6 +31,12 @@ const statusConfig = {
     variant: "destructive" as const,
     icon: XCircle,
     className: "",
+  },
+  draft: {
+    label: "Draft",
+    variant: "outline" as const,
+    icon: FileEdit,
+    className: "border-dashed",
   },
 };
 
